@@ -1,0 +1,500 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/*
+ * GameCowBull.java
+ *
+ * Created on 19 Oct, 2011, 10:14:48 PM
+ */
+package cow_bull;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Stack;
+import javax.swing.UIManager;
+
+/**
+ *
+ * @author anirudh
+ */
+public class GameCowBull extends javax.swing.JFrame {
+
+    ArrayList<Bull> bullList;
+    Stack<Cow> cowStack;    
+    Stack<Candidate> candidateStack;
+    
+    int currentCowCount,currentBullCount;
+    
+    int guessedNumber[];
+            
+    int phase;
+    
+    /** Creates new form GameCowBull */
+    public GameCowBull() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
+            System.out.println("Exception");
+        }
+        
+        initComponents();
+        
+        setSize(450,350);
+        setLocation(200,200);
+        
+        prepareForGame();
+
+    }
+    
+    private void prepareForGame(){
+        initDataStructures();        
+        
+        currentCowCount = currentBullCount = 0;
+        guessedNumberTextField.setEditable(false);
+        logTextArea.setEditable(rootPaneCheckingEnabled);
+        logTextArea.setText("Cow Bull Log....\n");        
+        phase = 1;
+        
+        initGame();
+    }    
+    
+    private void initGame(){       
+        Cow assumedCow = null;
+        addToLog("Starting Phase " + phase);
+        
+        if(candidateStack.empty()){
+            for(int i=cowStack.size()-1;i>=0;i--){
+                
+                    assumedCow = cowStack.get(i);                
+            
+                    if(assumedCow.isSureCow()){
+                        break;
+                    }
+                
+                    assumedCow.setSureCow(true);                
+                    assumedCow.setNotProbablePosition(phase-1);
+                    addToLog(assumedCow.getCownumber() + " is a real cow, adding it as a candidate");
+                    candidateStack.push(new Candidate(assumedCow.getCownumber(), assumedCow));                
+           }
+                        
+           addToLog(candidateStack.peek().getCandidateNumber() + " is popped back and added to cow stack");
+           guessedNumber[phase-2] = candidateStack.pop().getCandidateNumber();           
+        }
+        
+        switch(phase){
+            case 1: 
+                for(int i=1;i<4;i++){
+                    guessedNumber[i] = candidateStack.pop().getCandidateNumber();
+                }                
+                guessedNumber[0] = candidateStack.pop().getCandidateNumber();
+                break;
+
+            case 2:
+                assumedCow = new Cow(guessedNumber[phase-1],false);
+                cowStack.push(assumedCow);
+                addToLog("Assuming " + cowStack.peek().getCownumber() + " to be a cow");
+                guessedNumber[1] = candidateStack.pop().getCandidateNumber();
+                break;
+           
+            case 3:
+                assumedCow = new Cow(guessedNumber[phase-1],false);
+                cowStack.push(assumedCow);
+                addToLog("Assuming " + cowStack.peek().getCownumber() + " to be a cow");
+                guessedNumber[2] = candidateStack.pop().getCandidateNumber();
+                break;
+            
+            case 4:
+                assumedCow = new Cow(guessedNumber[phase-1],false);
+                cowStack.push(assumedCow);
+                addToLog("Assuming " + cowStack.peek().getCownumber() + " to be a cow");
+                guessedNumber[3] = candidateStack.pop().getCandidateNumber();
+        }
+        
+        addToLog("Cow = " + currentCowCount + " and Bull = " + currentBullCount);
+        
+        guessedNumberTextField.setText(getGuessedNumberAsString());        
+        addToLog("Guessing Number: " + getGuessedNumberAsString());
+    }
+    
+    private void addToLog(String text){
+        logTextArea.setText(logTextArea.getText() + "\n" + text);
+    }
+    
+    private void initDataStructures(){
+        bullList = new ArrayList<Bull>();
+        cowStack = new Stack<Cow>();
+        candidateStack = new Stack<Candidate>();        
+        
+        guessedNumber = new int[4];
+        guessedNumber[0] = 1;
+        guessedNumber[1] = 2;
+        guessedNumber[2] = 3;
+        guessedNumber[3] = 4;        
+        
+        for(int i=9;i>=1;i--){
+            candidateStack.push(new Candidate(i,null));
+        }
+    }
+
+    private String getGuessedNumberAsString(){
+        String retstr = "";
+        
+        for(int i=0;i<4;i++){
+            retstr = retstr + guessedNumber[i];
+        }
+        
+        return retstr;
+    }
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        guessedNumberTextField = new javax.swing.JTextField();
+        okButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        cowTextField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        bullTextField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        logTextArea = new javax.swing.JTextArea();
+        resetButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setText("Number");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, 30));
+        getContentPane().add(guessedNumberTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 150, -1));
+
+        okButton.setText("Ok");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(okButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 80, -1, -1));
+
+        jLabel2.setText("Cow");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
+        getContentPane().add(cowTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 80, 40, -1));
+
+        jLabel3.setText("Bull");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, -1, -1));
+        getContentPane().add(bullTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, 40, -1));
+
+        logTextArea.setColumns(20);
+        logTextArea.setRows(5);
+        jScrollPane1.setViewportView(logTextArea);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 370, 160));
+
+        resetButton.setText("Reset");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(resetButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 20, -1, -1));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        
+        int cowCount = Integer.parseInt(cowTextField.getText());
+        int bullCount = Integer.parseInt(bullTextField.getText());
+        
+        phase(bullCount,cowCount);               
+        
+    }//GEN-LAST:event_okButtonActionPerformed
+
+private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+    prepareForGame();
+}//GEN-LAST:event_resetButtonActionPerformed
+        
+    private void noBullNoCow(){
+        addToLog("0 bull, 0 cow");
+        initGame();
+    }
+           
+    
+    private void updateCowPositions(int position){
+        Iterator<Cow> iterator = cowStack.iterator();
+        
+        while(iterator.hasNext()){
+            iterator.next().setNotProbablePosition(position);
+        }
+    }
+    
+    private void finalizePositions(){
+        
+    }
+    
+    private void phase(int newBullCount,int newCowCount){
+        
+        /*1. If no bull and no cows exist
+         *  flush the number and guess fresh
+         */
+        if(newCowCount == 0 && newBullCount == 0){
+            noBullNoCow();
+            return;
+        }
+        
+        if((newBullCount + newCowCount)==4){
+            phase = 5;
+            currentBullCount = newBullCount;
+            currentCowCount = newCowCount;
+            finalizePositions();
+            return;
+        }
+                
+        /* 2. Check the Cow Stack for assumed cows
+         * a) if cowStack is empty which means its the initialization of the phase
+         * b) or if since last time the cow and bull count has not changed, which means
+         * you can not make a decision
+         */
+        
+        if(cowStack.empty() || (newCowCount == currentCowCount && newBullCount == currentBullCount)){
+           
+            /*Assumed the guessedNumber[0] to be a cow
+             */
+            Cow assumedCow;
+            if(candidateStack.empty()){
+                for(int i=cowStack.size()-1;i>=0;i--){
+                
+                    assumedCow = cowStack.get(i);                
+            
+                    if(assumedCow.isSureCow()){
+                        break;
+                    }
+                
+                    assumedCow.setSureCow(true);                
+                    assumedCow.setNotProbablePosition(phase-1);
+                    addToLog(assumedCow.getCownumber() + " is a real cow, adding it as a candidate");
+                    candidateStack.push(new Candidate(assumedCow.getCownumber(), assumedCow));                
+                }
+                        
+                addToLog(candidateStack.peek().getCandidateNumber() + " is popped back and added to cow stack");
+                guessedNumber[phase-1] = candidateStack.pop().getCandidateNumber();
+                                    
+                phase += 1;
+                initGame();
+                return;
+            }
+            
+            assumedCow = new Cow(guessedNumber[phase-1],false);
+            cowStack.push(assumedCow);
+            addToLog("Assuming " + assumedCow.getCownumber() + " to be a cow");
+            
+            guessedNumber[phase-1] = candidateStack.pop().getCandidateNumber();
+            guessedNumberTextField.setText(getGuessedNumberAsString());            
+            addToLog("Guessing Number: " + getGuessedNumberAsString());
+            
+            currentCowCount = newCowCount;
+            currentBullCount = newBullCount;
+            return;
+        }
+        
+
+        /*If the cowCount increases by 1 and bull count remains the same
+         * then the guessednumber[0] is sureCow and other set of assumed cows are not of any use
+         * 
+         */           
+        if(newCowCount == (currentCowCount + 1) && newBullCount == currentBullCount){
+            Cow assumedCow = null;            
+                        
+            while(!cowStack.empty()){
+                Cow tempCow = cowStack.peek();
+                if(tempCow.isSureCow()){
+                    break;
+                }
+                tempCow = cowStack.pop();
+                addToLog(tempCow.getCownumber() + " is not part of the number, adding it to garbage");
+            }
+            
+            assumedCow = new Cow(guessedNumber[phase-1], true);
+            assumedCow.setNotProbablePosition(phase-1);
+            addToLog(assumedCow.getCownumber() + " is a real cow");
+            cowStack.push(assumedCow);         
+            
+            currentCowCount = newCowCount;
+            currentBullCount = newBullCount;
+            
+            phase += 1;
+            initGame();
+            return;
+        }
+                
+        /*If the cowCount remains the same and bull count increases by 1
+         * then the guessednumber[0] is a sureBull and other set of assumed cows are not of any use
+         * 
+         */           
+        if(newCowCount == currentCowCount  && newBullCount == (currentBullCount+1)){
+            Bull sureBull = null;            
+                        
+            while(!cowStack.empty()){
+                Cow tempCow = cowStack.peek();
+                if(tempCow.isSureCow()){
+                    break;
+                }
+                tempCow = cowStack.pop();
+                addToLog(tempCow.getCownumber() + " is not part of the number, adding it to garbage");
+            }
+            //add probable positions of cow            
+            sureBull= new Bull(guessedNumber[phase-1],phase);
+            addToLog(sureBull.getBullnumber() + " is a bull");
+            bullList.add(sureBull);   
+            Cow.notBullPosition[phase-1] = false;
+            updateCowPositions(phase-1);
+            
+            currentCowCount = newCowCount;
+            currentBullCount = newBullCount;
+            
+            phase += 1;
+            initGame();
+            return;
+        }
+                
+        /*If the cowCount decreases by 1 and bull count remains the same
+         * then all set of assumed cows are real cows and guessednumber[0] is garbage
+         */            
+        if(newCowCount == (currentCowCount - 1) && newBullCount == currentBullCount){            
+            addToLog(guessedNumber[phase-1] + " is not part of the number, adding it to garbage");
+            
+            for(int i=cowStack.size()-1;i>=0;i--){
+                
+                Cow assumedCow = cowStack.get(i);                
+            
+                if(assumedCow.isSureCow()){
+                    break;
+                }
+                
+                assumedCow.setSureCow(true);                
+                assumedCow.setNotProbablePosition(phase-1);
+                addToLog(assumedCow.getCownumber() + " is a real cow, adding it as a candidate");
+                candidateStack.push(new Candidate(assumedCow.getCownumber(), assumedCow));                
+            }
+                        
+            addToLog(candidateStack.peek().getCandidateNumber() + " is popped back and added to cow stack");
+            guessedNumber[phase-1] = candidateStack.pop().getCandidateNumber();
+                                    
+            phase += 1;
+            initGame();
+            return;
+        }
+                   
+        /*If the cowCount remains the same and bull count decreases by 1
+         * then top element of cowStack is a bull and guessednumber[0] is garbage
+         */            
+        if(newCowCount == currentCowCount  && newBullCount == (currentBullCount-1)){            
+            Bull sureBull = null;            
+            addToLog(guessedNumber[phase-1] + " is not part of the number, adding it to garbage");
+            
+            guessedNumber[phase-1] = cowStack.pop().getCownumber();
+            sureBull= new Bull(guessedNumber[phase-1],phase);
+            
+            addToLog(sureBull.getBullnumber() + " is a bull");
+            bullList.add(sureBull);
+            Cow.notBullPosition[phase-1] = false;            
+            updateCowPositions(phase-1);
+            
+            phase += 1;
+            initGame();
+            return;
+        }
+        
+        /* If the cowCount decreases by 1 and bull count increases by 1
+         * then all set of assumed cows are real cows and guessednumber[0] is bull
+         */            
+        if(newCowCount == (currentCowCount-1)  && newBullCount == (currentBullCount+1)){            
+            Bull sureBull = null;            
+            
+            sureBull= new Bull(guessedNumber[phase-1],phase);            
+            addToLog(sureBull.getBullnumber() + " is a bull");
+            bullList.add(sureBull); 
+            Cow.notBullPosition[phase-1] = false;
+            updateCowPositions(phase-1);
+            
+            for(int i=cowStack.size()-1;i>=0;i--){
+                
+                Cow assumedCow = cowStack.get(i);   
+                
+                if(assumedCow.isSureCow()){
+                    break;
+                }
+                
+                assumedCow.setSureCow(true);
+                assumedCow.setNotProbablePosition(phase-1);
+                addToLog(assumedCow.getCownumber() + " is a real cow, adding it as a candidate");
+                candidateStack.push(new Candidate(assumedCow.getCownumber(), assumedCow));                
+            }
+            
+            currentCowCount = newCowCount;
+            currentBullCount = newBullCount;
+            
+            phase += 1;
+            initGame();
+            return;
+        }
+        
+        /* If the cowCount increases 1 and bull count decreases by 1
+         * then guessednumber[0] is cow and top element of cow stack is a bull
+         */            
+        if(newCowCount == (currentCowCount+1)  && newBullCount == (currentBullCount-1)){            
+            Bull sureBull = null;
+            sureBull = new Bull(cowStack.pop().getCownumber(),phase);            
+            addToLog(sureBull.getBullnumber() + " is a bull");
+            bullList.add(sureBull);         
+            Cow.notBullPosition[phase-1] = false;
+            updateCowPositions(phase-1);
+            
+            //add probable positions of cow
+            Cow assumedCow = new Cow(guessedNumber[phase-1], true);
+            assumedCow.setNotProbablePosition(phase-1);
+            addToLog(assumedCow.getCownumber() + " is a real cow, adding it as a candidate");
+            cowStack.push(assumedCow);            
+            candidateStack.push(new Candidate(assumedCow.getCownumber(), assumedCow));                
+            guessedNumber[phase-1] = sureBull.getBullnumber();        
+                    
+            //currentCowCount = newCowCount;
+            //currentBullCount = newBullCount;
+            
+            phase += 1;
+            initGame();
+            return;
+        }
+            
+    }
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                new GameCowBull().setVisible(true);
+            }
+        });
+    }
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField bullTextField;
+    private javax.swing.JTextField cowTextField;
+    private javax.swing.JTextField guessedNumberTextField;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea logTextArea;
+    private javax.swing.JButton okButton;
+    private javax.swing.JButton resetButton;
+    // End of variables declaration//GEN-END:variables
+}
